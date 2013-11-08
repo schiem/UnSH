@@ -30,6 +30,8 @@ s.connect((HOST, PORT))
 while 1:
     s.sendall(raw_input('>'))
     data = s.recv(1024)
+    if data == "exit":
+        break
     print data
 
 s.close()

