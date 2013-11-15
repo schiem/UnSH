@@ -25,6 +25,27 @@ if '-a' in sys.argv:
 else:
     HOST = 'localhost'
 
+
+def scan_net(ip1, ip2, port):
+    ip1_list = ip1.split('.')
+    ip2_list = ip2.split('.')
+    conn_list = []
+    for i in range(int(ip1_list[0]), int(ip2_list[0]) + 1):
+        for j in range(int(ip1_list[1]), int(ip2_list[1]) + 1):
+            for k in range(int(ip1_list[2]), int(ip2_list[2]) + 1):
+                for l in range(int(ip1_list[3]), int(ip2_list[3]) + 1):
+                    addr = str(i) + '.' + str(j) + '.' + str(k) + '.' + str(l)
+                    try:
+                        print "Attempting " + addr
+                        s = open_connection(addr, port)
+                        conn_list.append(addr)
+                        s.close()
+                        print "Found connection at " + addr
+                    except:
+                        pass
+    return conn_list
+
+
 def put(file_name):
     
     read_file =  open(file_name, "rb")
@@ -53,13 +74,29 @@ def recvall(sock, n):
         data += piece
     return data
 
-def open_connection():
+def open_connection(host, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, PORT))
+    s.connect((host, port))
     return s
 
 if __name__ == "__main__":
-    s = open_connection()
+    '''
+    Next to implement:
+        Address scanning.  The issue is that as soon as an address is connected to, it closes.
+    if '-s' in sys.argv:
+        ip = raw_input("Input ip address range (separated by a space): ")
+        ip_list = scan_net(ip.split()[0], ip.split()[1], PORT)
+        if not ip_list:
+            print "No open addresses found."
+            sys.exit(0)
+        else:
+            print "Available IPs on port: "
+            for i in range(len(ip_list)):
+                print str(i) + " " + ip_list[i]
+            HOST = ip_list[int(raw_input("Select the IP on the list: "))]
+    '''           
+
+    s = open_connection(HOST, PORT)
     while 1:
         command = raw_input('>')
         s.sendall(command)
