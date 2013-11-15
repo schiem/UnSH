@@ -14,6 +14,8 @@ On the client machine, run the command "python client.py -a {IP-Address}" with t
 
 Once the connection is established, commands can be typed on the client as if in a normal bash prompt.  However, tab to auto-complete has not yet been implemented.  The command "grab {file}" can be used to get a file from the current directory of the server and place it in the same directory of as the client.py file.  The command "put {file}" is used to place a file in the same directory as the client.py onto the current directory of the server.  Note: grab and put may have slightly erratic behavior from machine to machine.
 
+Type "exit" to close the connection.
+
 Ideally, this project is cross platform, but it has only been tested on Unix based systems (OsX, linux).
 Commands like vim, nano, lynx, etc. will not work because they do not rely on the terminal standard windows. 
 
