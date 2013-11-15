@@ -38,6 +38,7 @@ def scan_net(ip1, ip2, port):
                     try:
                         print "Attempting " + addr
                         s = open_connection(addr, port, 0.1)
+                        data = s.recv(1024)
                         conn_list.append(addr)
                         s.close()
                         print "Found connection at " + addr
