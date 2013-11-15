@@ -26,15 +26,19 @@ else:
     HOST = 'localhost'
 
 def put(file_name):
-    file_string = open(file_name, "rb").read()
+    
+    read_file =  open(file_name, "rb")
+    file_string = read_file.read()
+    read_file.close()
     file_size = len(file_string)
-    return struct.pack('>I', file_size) +  file_string
+    return (struct.pack('>Q', file_size) +  file_string)
 
 def get_file(sock):
-    full_message = recvall(sock, 4)
+    full_message = recvall(sock, 8)
+    print full_message
     if not full_message:
         return None
-    mess_length = struct.unpack('>I', full_message)[0]
+    mess_length = struct.unpack('>Q', full_message)[0]
     return recvall(sock, mess_length)
 
 def recvall(sock, n):
@@ -62,11 +66,11 @@ if __name__ == "__main__":
         if command.split()[0] == "grab":
             data = get_file(s)
             open(command.split()[1], "wb").write(data)
-            data = s.recv(1024)
-            
+            data = "Written successfully"
         elif command.split()[0] == "put":
             s.sendall(put(command.split()[1]))
             data = "Send successfully"
+            data = s.recv(1024)
         else:    
             data = s.recv(1024)
         if data == "exit":
