@@ -59,7 +59,8 @@ if __name__ == "__main__":
     while 1:
         data = conn.recv(1024)
         if not data:
-            break
+            print "I'm here!"
+            conn, addr = s.accept()
         if data == "exit":
             conn.sendall(data)
             break

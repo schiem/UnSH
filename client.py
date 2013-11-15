@@ -37,7 +37,7 @@ def scan_net(ip1, ip2, port):
                     addr = str(i) + '.' + str(j) + '.' + str(k) + '.' + str(l)
                     try:
                         print "Attempting " + addr
-                        s = open_connection(addr, port)
+                        s = open_connection(addr, port, 0.1)
                         conn_list.append(addr)
                         s.close()
                         print "Found connection at " + addr
@@ -74,8 +74,9 @@ def recvall(sock, n):
         data += piece
     return data
 
-def open_connection(host, port):
+def open_connection(host, port, timeout):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(timeout)
     s.connect((host, port))
     return s
 
@@ -83,6 +84,7 @@ if __name__ == "__main__":
     '''
     Next to implement:
         Address scanning.  The issue is that as soon as an address is connected to, it closes.
+    '''
     if '-s' in sys.argv:
         ip = raw_input("Input ip address range (separated by a space): ")
         ip_list = scan_net(ip.split()[0], ip.split()[1], PORT)
@@ -94,9 +96,8 @@ if __name__ == "__main__":
             for i in range(len(ip_list)):
                 print str(i) + " " + ip_list[i]
             HOST = ip_list[int(raw_input("Select the IP on the list: "))]
-    '''           
 
-    s = open_connection(HOST, PORT)
+    s = open_connection(HOST, PORT, None)
     while 1:
         command = raw_input('>')
         s.sendall(command)
