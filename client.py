@@ -99,6 +99,7 @@ if __name__ == "__main__":
             HOST = ip_list[int(raw_input("Select the IP on the list: "))]
 
     s = open_connection(HOST, PORT, None)
+    print "Connection established."
     while 1:
         command = raw_input('>')
         s.sendall(command)
