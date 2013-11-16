@@ -38,12 +38,11 @@ def scan_net(ip1, ip2, port):
                     try:
                         print "Attempting " + addr
                         s = open_connection(addr, port, 0.1)
-                        data = s.recv(1024)
-                        conn_list.append(addr)
                         s.close()
+                        conn_list.append(addr)
                         print "Found connection at " + addr
                     except:
-                        pass
+                        print "No connection found."
     return conn_list
 
 
@@ -97,9 +96,10 @@ if __name__ == "__main__":
             for i in range(len(ip_list)):
                 print str(i) + " " + ip_list[i]
             HOST = ip_list[int(raw_input("Select the IP on the list: "))]
-
+            
     s = open_connection(HOST, PORT, None)
     print "Connection established."
+    s.recv(1024)
     while 1:
         command = raw_input('>')
         s.sendall(command)
