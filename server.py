@@ -1,3 +1,11 @@
+##############################################################
+# server.py
+# Part of UnSH, and insecure protocol to connect devices.
+# 
+# Michael Yoder
+# v. 1.0
+##############################################################
+
 import socket
 import os
 import sys
@@ -19,7 +27,14 @@ if '-p' in sys.argv:
 else:
     PORT = 5000
 
+'''
+This is the server side function to send data from server->client.
+A file name is given, and an 8 byte header is appended to a string
+representing that file.
 
+RETURN: A string representation of a file with an 8 byte header
+packaged in a struct.
+'''
 def grab(file_name):
     read_file =  open(file_name, "rb")
 
@@ -28,6 +43,13 @@ def grab(file_name):
     file_size = len(file_string)
     return struct.pack('>Q', file_size) +  file_string
 
+'''
+the server side function to receive a file.  a socket object
+is passed in, and the first 8 bytes are read, denoting the file
+size.  the rest of the file is then read in based on the length.
+
+return: a string object representing a file.
+'''
 def get_file(sock):
     full_message = recvall(sock, 8)
     print full_message
@@ -35,6 +57,13 @@ def get_file(sock):
         return None
     mess_length = struct.unpack('>Q', full_message)[0]
     return recvall(sock, mess_length)
+
+'''
+A function which takes a number of bytes, and continue to receive
+data until that number of bytes has been received.
+
+RETURN: The data received, None if the string ended early.
+'''
 
 def recvall(sock, n):
     dat = ''
@@ -46,6 +75,12 @@ def recvall(sock, n):
     return dat
 
 
+'''
+Takes a host and a port and accepts one connection.
+
+RETURN: A socket object with a connection.
+'''
+
 def open_connection(host, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, port))
@@ -53,7 +88,13 @@ def open_connection(host, port):
     conn, addr = s.accept()
     return s, conn, addr
 
-
+'''
+The main code loop.  Receives data, makes a system call 
+or a "grab"/"put" command.  Sends data back.  Upon
+receiving an "exit" command, the program is stopped.
+If the client disconnects with no "exit", the server accepts
+another connection.
+'''
 if __name__ == "__main__":
     s, conn, addr = open_connection(HOST, PORT)
     conn.sendall('Connection established.')

@@ -1,3 +1,11 @@
+##############################################################
+# client.py
+# Part of UnSH, and insecure protocol to connect devices.
+# 
+# Michael Yoder
+# v. 1.0
+##############################################################
+
 import socket
 import os
 import sys
@@ -25,7 +33,13 @@ if '-a' in sys.argv:
 else:
     HOST = 'localhost'
 
+'''
+A function which takes in two IPs and a port, and will iterate
+through the IPs checking connections.  This checks the last bytes
+first.
 
+RETURN: List of IP addresses containing available connections.
+'''
 def scan_net(ip1, ip2, port):
     ip1_list = ip1.split('.')
     ip2_list = ip2.split('.')
@@ -45,7 +59,14 @@ def scan_net(ip1, ip2, port):
                         print "No connection found."
     return conn_list
 
+'''
+The client side function to send data from client->server.  A file
+name is given, and an 8 byte header is appended to a string 
+representing the file.
 
+RETURN: A string representation of a file with an 8 byte header
+packaged in a struct.
+'''
 def put(file_name):
     
     read_file =  open(file_name, "rb")
@@ -54,6 +75,13 @@ def put(file_name):
     file_size = len(file_string)
     return (struct.pack('>Q', file_size) +  file_string)
 
+'''
+the server side function to receive a file.  a socket object
+is passed in, and the first 8 bytes are read, denoting the file
+size.  the rest of the file is then read in based on the length.
+
+return: a string object representing a file.
+'''
 def get_file(sock):
     full_message = recvall(sock, 8)
     print full_message
@@ -62,6 +90,12 @@ def get_file(sock):
     mess_length = struct.unpack('>Q', full_message)[0]
     return recvall(sock, mess_length)
 
+'''
+A function which takes a number of bytes, and continue to receive
+data until that number of bytes has been received.
+
+RETURN: The data received, None if the string ended early.
+'''
 def recvall(sock, n):
     data = ''
     while len(data) < n:
@@ -74,17 +108,27 @@ def recvall(sock, n):
         data += piece
     return data
 
+'''
+Takes a host, port, and a timeout, attempting to connect to the
+host.
+
+RETURN: A socket object. 
+'''
 def open_connection(host, port, timeout):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(timeout)
     s.connect((host, port))
     return s
 
+'''
+The main code loop.  Takes commands from the user, and sends those
+to the server.  Special cases are taken for the "grab"/"put" commands.
+Received data is printed.  Upon receiving the "exit" command, the client
+is terminated.
+'''
 if __name__ == "__main__":
     '''
     Address scanning, with the -s option.  If no addresses are found, the program will exit.
-    Scanning occurs by iterating through 
-    
     '''
     if '-s' in sys.argv:
         ip = raw_input("Input ip address range (separated by a space): ")
@@ -97,7 +141,7 @@ if __name__ == "__main__":
             for i in range(len(ip_list)):
                 print str(i) + " " + ip_list[i]
             HOST = ip_list[int(raw_input("Select the IP on the list: "))]
-            
+
     s = open_connection(HOST, PORT, None)
     print s.recv(1024)
     while 1:

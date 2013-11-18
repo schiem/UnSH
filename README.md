@@ -5,7 +5,8 @@ How it works:
 Python sockets were used to establish a connection between the two machines, with one acting as a client and the other acting as a server.  The client would receive commands to be run from the command line and send them as strings to the server.  The server would execute the commands, record the output, and send that data back to the client.
 File sharing was also implemented by writing a very small protocol which sits on top of TCP.  Because TCP only allows packets of a certain size, most files could not be sent in a single packet.  This resulted in parts of files essentially being lost, as the client would top listening after the end of a data stream was reached.  To counter this, each file is prefaced with an eight byte header which contains the length of the following file.  The client is then told to continue to receive data from the server until data which satisfies the length of the file has been received.
 The same protocol was implemented for sending files from the client to the server.
-Address scanning will be implemented soon, which will allow for the discovery of servers that are listening on a particular port.  A range of IP addresses could be put in, and those would be scanned for listening servers.  Any of the listening servers could then be connected to.
+Address scanning takes in two ip addresses and scans for any available connections in the given range.  The lowest bytes are scanned first, up to the highest. 
+
 
 How to use it:
 On the server machine, run the command "python server.py" with the option argument of -p to specify a port ("python server.py -p 2000").  On unix systems, this can be run in the background by appending an "&" to the end of the command.  The default port is 5000.
@@ -14,9 +15,9 @@ On the client machine, run the command "python client.py -a {IP-Address}" with t
 
 Once the connection is established, commands can be typed on the client as if in a normal bash prompt.  However, tab to auto-complete has not yet been implemented.  The command "grab {file}" can be used to get a file from the current directory of the server and place it in the same directory of as the client.py file.  The command "put {file}" is used to place a file in the same directory as the client.py onto the current directory of the server.  Note: grab and put may have slightly erratic behavior from machine to machine.
 
+To scan addresses, use the "-s" flag in the command line.  The user will be prompted to input two addresses, separated by a space.  The first IP tuple should be lower than the second in each field (i.e 1.2.3.4 2.3.4.5 as opposed to 4.3.2.1 1.2.3.4, which will throw an error).  The user can then choose from a list of open addresses to connect to.
+
 Type "exit" to close the connection.
 
 Ideally, this project is cross platform, but it has only been tested on Unix based systems (OsX, linux).
-Commands like vim, nano, lynx, etc. will not work because they do not rely on the terminal standard windows. 
-
-In file documentation coming soon!
+Commands like vim, nano, lynx, etc. will not work because they do not rely on the terminal standards. 
