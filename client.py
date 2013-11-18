@@ -82,8 +82,9 @@ def open_connection(host, port, timeout):
 
 if __name__ == "__main__":
     '''
-    Next to implement:
-        Address scanning.  The issue is that as soon as an address is connected to, it closes.
+    Address scanning, with the -s option.  If no addresses are found, the program will exit.
+    Scanning occurs by iterating through 
+    
     '''
     if '-s' in sys.argv:
         ip = raw_input("Input ip address range (separated by a space): ")
@@ -98,12 +99,13 @@ if __name__ == "__main__":
             HOST = ip_list[int(raw_input("Select the IP on the list: "))]
             
     s = open_connection(HOST, PORT, None)
-    print "Connection established."
-    s.recv(1024)
+    print s.recv(1024)
     while 1:
         command = raw_input('>')
         s.sendall(command)
-        if command.split()[0] == "grab":
+        if command == '':
+            data = ''
+        elif command.split()[0] == "grab":
             data = get_file(s)
             open(command.split()[1], "wb").write(data)
             data = "Written successfully"

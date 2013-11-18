@@ -56,6 +56,7 @@ def open_connection(host, port):
 
 if __name__ == "__main__":
     s, conn, addr = open_connection(HOST, PORT)
+    conn.sendall('Connection established.')
     while 1:
         data = conn.recv(1024)
         if not data:
